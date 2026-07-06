@@ -69,7 +69,7 @@ export default {
         "Ip City": { "value": "", "type": "text", },
         "Cookies": { "value": "", "type": "text", },
         "Client_Ip": { "value": "", "type": "text", },
-        "Preffered Contact Language": { "value": language, "type": "text",},
+        "Preffered Contact Language": { "value": "RU", "type": "text",},
         "Preffered Product": { "value": "General", "type": "text", },
         "Newsletter Agreement Text": { "value": "Ich stimme dem Erhalt von Informationen und Angeboten der Negentrix Education Group (ICH, DWW, BIT, MBIA u.a.) zu. Eine Abmeldung ist jederzeit möglich.", "type": "text", },
         "Privacy Agreement Id": { "value": "", "type": "text", },

@@ -13,34 +13,11 @@ class Analytics {
         this.settings = Object.assign(defaultSettings, customSettings);
         this.forms = this.getForms();
         this.insertHiddenFieldsInForms(this.settings.hiddenFields);
+        this.settings.hiddenFields["Preffered Contact Language"].value = this.language;
         this.tgLinks = document.querySelectorAll(`a[href="${this.settings.tgBaseLink}"]`);
         Analytics.instance = this;
 
         return this;
-    }
-
-    getValidateField(name) {
-        return this.settings.validateFields[name];
-    }
-
-    setValidateField(name, errorType = ["custom", "custom"]) {
-        this.settings.validateFields[name] = {"error_type": error_type};
-    }
-
-    removeValidateField(name) {
-        delete this.settings.validateFields[name];
-    }
-
-    getHiddenField(name) {
-        return this.settings.hiddenFields[name];
-    }
-
-    setHiddenField(name, type = "text", value = "") {
-        this.settings.hiddenFields[name] = {value, type};
-    }
-
-    removeHiddenField(name) {
-        delete this.settings.hiddenFields[name];
     }
 
     _constructSendPulseLink (pulseValues = this.settings.tgPulseValues, urlBase = "https://tg.pulse.is/", botName = this.settings.tgBotName, pulseStart = this.settings.tgSendPulseStart) {
