@@ -240,7 +240,7 @@ class Analytics {
                 countryCodeIso: phoneAssembled.phoneMask
             };
 
-            const response = await fetch(`${this.settings.apiUrl}/phone/validate`, {
+            const response = await fetch(`${this.settings.apiUrl}/visitor/phone/validate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -392,15 +392,12 @@ class Analytics {
     _validateFields(form, fieldsObject = this.settings.validateFields) {
         const fields = Object.entries(fieldsObject);
 
-        // Используем for...of вместо forEach
         for (const [name, config] of fields) {
             const fieldEl = form.querySelector(`[name="${name}"]`);
 
-            // Защита от ошибок, если поля нет в конкретной форме
             if (!fieldEl) continue;
 
             const fieldValue = fieldEl.value.trim();
-            console.log(name, fieldValue, fieldEl);
 
             if (!fieldValue) {
                 this._showErrorMessage(config.error_type[0]);
