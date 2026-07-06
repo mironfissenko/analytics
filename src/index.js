@@ -377,7 +377,7 @@ class Analytics {
             // сделать кроссплатформенное обнаружение форм, не через tildaspec-phone-part.
             // у нас есть еще webflow
             for (const form of initForms) {
-                const flag = (form.querySelector('input[name="email"]') !== null) && (form.querySelector('input[name="phone"]') !== null);
+                const flag = (form.querySelector('input[name="email"]') !== null) && ((form.querySelector('input[name="phone"]') !== null) || (form.querySelector('input[name="phone-visible"]') !== null));
 
                 if (flag) {
                     resForms.push(form);
