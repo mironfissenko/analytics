@@ -16,35 +16,8 @@ class Analytics {
         this.settings.hiddenFields.Preferred_Contact_Language.value = this.language;
         this.tgLinks = document.querySelectorAll(`a[href="${this.settings.tgBaseLink}"]`);
 
-        if (this.settings.platform === 'webflow') {
+        if (this.settings.platform === "webflow") {
             this.settings.hiddenFields.phone = { "value": "", "type": "text", };
-            this.forms.forEach(form => {
-                const phoneVisible = form.querySelector('input[name="phone-visible"]');
-                const phone = form.querySelector('input[name="phone"]');
-                const iti = window.intlTelInput(phoneVisible, {
-                    initialCountry: "de",
-                    loadUtils: () => import(
-                        /* webpackIgnore: true */
-                        "https://cdn.jsdelivr.net/npm/intl-tel-input@28.0.4/dist/js/utils.js"
-                        ),
-                });
-
-                iti.promise.then(() => {
-                    const syncPhoneNumber = () => {
-                        if (iti.isValidNumber()) {
-                            phone.value = iti.getNumber();
-                        } else {
-                            phone.value = "";
-                        }
-                    };
-
-                    phoneVisible.addEventListener("input", syncPhoneNumber);
-                    phoneVisible.addEventListener("countrychange", syncPhoneNumber);
-
-                }).catch((error) => {
-                    console.error("Ошибка загрузки утилит intl-tel-input в форме:", error);
-                });
-            });
         }
 
         Analytics.instance = this;
@@ -374,8 +347,6 @@ class Analytics {
             let initForms = document.querySelectorAll('form');
             const resForms = [];
 
-            // сделать кроссплатформенное обнаружение форм, не через tildaspec-phone-part.
-            // у нас есть еще webflow
             for (const form of initForms) {
                 const flag = (form.querySelector('input[name="email"]') !== null) && ((form.querySelector('input[name="phone"]') !== null) || (form.querySelector('input[name="phone-visible"]') !== null));
 
@@ -505,6 +476,36 @@ class Analytics {
 
     _init() {
         this.insertHiddenFieldsInForms(this.settings.hiddenFields);
+
+        if (this.settings.platform === 'webflow') {
+            this.forms.forEach(form => {
+                const phoneVisible = form.querySelector('input[name="phone-visible"]');
+                const phone = form.querySelector('input[name="phone"]');
+                const iti = window.intlTelInput(phoneVisible, {
+                    initialCountry: "de",
+                    loadUtils: () => import(
+                        /* webpackIgnore: true */
+                        "https://cdn.jsdelivr.net/npm/intl-tel-input@28.0.4/dist/js/utils.js"
+                        ),
+                });
+
+                iti.promise.then(() => {
+                    const syncPhoneNumber = () => {
+                        if (iti.isValidNumber()) {
+                            phone.value = iti.getNumber();
+                        } else {
+                            phone.value = "";
+                        }
+                    };
+
+                    phoneVisible.addEventListener("input", syncPhoneNumber);
+                    phoneVisible.addEventListener("countrychange", syncPhoneNumber);
+
+                }).catch((error) => {
+                    console.error("Ошибка загрузки утилит intl-tel-input в форме:", error);
+                });
+            });
+        }
         this.lastNameHelper(this.forms);
         this.subValidation(this.forms);
     }
