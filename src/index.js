@@ -12,7 +12,6 @@ class Analytics {
         this.language = language;
         this.settings = Object.assign(defaultSettings, customSettings);
         this.forms = this.getForms();
-        this.insertHiddenFieldsInForms(this.settings.hiddenFields);
         this.settings.hiddenFields["Preffered_Contact_Language"].value = this.language;
         this.tgLinks = document.querySelectorAll(`a[href="${this.settings.tgBaseLink}"]`);
         Analytics.instance = this;
@@ -498,6 +497,7 @@ class Analytics {
     }
 
     init() {
+        this.insertHiddenFieldsInForms(this.settings.hiddenFields);
         this.lastNameHelper(this.forms);
         this.subValidation(this.forms);
     }
