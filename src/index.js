@@ -10,6 +10,7 @@ class Analytics {
         }
 
         this.language = language;
+        this.eventsTriggeredLast = new Set();
         this.settings = Object.assign(defaultSettings, customSettings);
         this.forms = this.getForms();
         this.settings.hiddenFields["Preffered_Contact_Language"].value = this.language;
@@ -478,15 +479,13 @@ class Analytics {
     }
 
     initAfterAllEvents(eventName) {
-        let eventsTriggeredLast = new Set();
-
         console.log(eventName);
-        eventsTriggeredLast.add(eventName);
+        this.eventsTriggeredLast.add(eventName);
 
         if (
-            eventsTriggeredLast.has("DOMContentLoaded") &&
-            eventsTriggeredLast.has("pageshow") &&
-            eventsTriggeredLast.has("load")
+            this.eventsTriggeredLast.has("DOMContentLoaded") &&
+            this.eventsTriggeredLast.has("pageshow") &&
+            this.eventsTriggeredLast.has("load")
         ) {
             console.log("All events happened; waiting 100ms");
             setTimeout(() => {
