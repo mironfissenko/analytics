@@ -25,7 +25,7 @@ class Analytics {
     }
 
     setValidateField(name, errorType = ["custom", "custom"]) {
-        this.settings.validateFields[name] = {"error_type": error_type};
+        this.settings.validateFields[name] = {"error_type": errorType};
     }
 
     removeValidateField(name) {
@@ -191,10 +191,10 @@ class Analytics {
 
                     this._inputInHiddenField("Client_Ip", data.clientIp);
                     this._inputInHiddenField("User_Agent", data.userAgent);
-                    this._inputInHiddenField("Accept Language", data.acceptLanguage);
-                    this._inputInHiddenField("Ip Region", data.ipRegion);
-                    this._inputInHiddenField("Ip Country", data.ipCountry);
-                    this._inputInHiddenField("Ip City", data.ipCity);
+                    this._inputInHiddenField("Accept_Language", data.acceptLanguage);
+                    this._inputInHiddenField("Ip_Region", data.ipRegion);
+                    this._inputInHiddenField("Ip_Country", data.ipCountry);
+                    this._inputInHiddenField("Ip_City", data.ipCity);
                     this._inputInHiddenField("Cookies", JSON.stringify(this._getAllCookies()));
 
                     form.setAttribute("analyticsTriggered", "true");
