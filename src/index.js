@@ -156,8 +156,10 @@ class Analytics {
 
     _inputInHiddenField(fieldName, fieldValue) {
         let fields = document.querySelectorAll(`input[name='${fieldName}']`);
-        for (const field of fields) {
-            field.value = fieldValue;
+        if (fields) {
+            for (const field of fields) {
+                field.value = fieldValue;
+            }
         }
     }
 
