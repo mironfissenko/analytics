@@ -31,7 +31,6 @@ export default class Analytics {
         delete this.settings.validateFields[name];
     }
 
-
     getHiddenField(name) {
         return this.settings.hiddenFields[name];
     }
@@ -43,8 +42,6 @@ export default class Analytics {
     removeHiddenField(name) {
         delete this.settings.hiddenFields[name];
     }
-
-
 
     _constructSendPulseLink (pulseValues = this.settings.tgPulseValues, urlBase = "https://tg.pulse.is/", botName = this.settings.tgBotName, pulseStart = this.settings.tgSendPulseStart) {
         let link = urlBase + botName + "?start=" + pulseStart;
@@ -305,8 +302,7 @@ export default class Analytics {
     _stopButtonAnimation(form) {
         form.setAttribute("animation", "false");
         console.log("Validation is not busy;");
-    }
-
+    }z
 
     _fuTilda(form) {
         try {
