@@ -1,5 +1,5 @@
 import defaultSettings from "./settings";
-export default class Analytics {
+class Analytics {
     _formSubmitted = false;
     _mainPhone = null;
     _mainEmail = null;
@@ -501,3 +501,5 @@ export default class Analytics {
         this.subValidation(this.forms);
     }
 }
+
+export default Analytics;
