@@ -13,7 +13,7 @@ class Analytics {
         this.eventsTriggeredLast = new Set();
         this.settings = Object.assign(defaultSettings, customSettings);
         this.forms = this.getForms();
-        this.settings.hiddenFields["Preffered_Contact_Language"].value = this.language;
+        this.settings.hiddenFields["Preferred_Contact_Language"].value = this.language;
         this.tgLinks = document.querySelectorAll(`a[href="${this.settings.tgBaseLink}"]`);
         Analytics.instance = this;
 
