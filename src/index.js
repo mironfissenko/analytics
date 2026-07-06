@@ -275,7 +275,7 @@ class Analytics {
             form.setAttribute("animation", "true");
             console.log("Animation started;");
 
-            let subButton = form.querySelector("button[type='submit']");
+            let subButton = form.querySelector("[type='submit']");
             const originalText = subButton.textContent;
             const frames = [
                 ".",
