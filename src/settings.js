@@ -1,8 +1,13 @@
 export default {
     "popupSelector": "#tilda-popup-for-error",
     "tgBaseLink": "https://t.me/ICHBuddyBot",
-    "tgPulseLink": "https://tg.pulse.is/ICHBuddyBot?start=682c86d992037dea7e02af12|phone_number=",
-    "platform": "Tilda",
+    "tgBotName": "ICHBuddyBot",
+    "tgSendPulseStart": "682c86d992037dea7e02af12",
+    "tgPulseValues": {
+        "phone_number": "",
+        "email": "",
+    },
+    "platform": "tilda",
     "company": "ICH",
     "apiUrl": "https://api.int.negentrix.com",
     "errorMap": {
@@ -66,12 +71,18 @@ export default {
         "Client_Ip": { "value": "", "type": "text", },
         "Preffered Contact Language": { "value": language, "type": "text",},
         "Preffered Product": { "value": "General", "type": "text", },
-        "Newsletter Agreement Text": { "value": "Ich somthing...", "type": "text", },
+        "Newsletter Agreement Text": { "value": "Ich stimme dem Erhalt von Informationen und Angeboten der Negentrix Education Group (ICH, DWW, BIT, MBIA u.a.) zu. Eine Abmeldung ist jederzeit möglich.", "type": "text", },
         "Privacy Agreement Id": { "value": "", "type": "text", },
         "ga_client_id": { "value": "","type": "text", },
         "first_source": { "value": "", "type": "text", },
         "first_landing_page": { "value": "", "type": "text", },
         "first_medium": { "value": "", "type": "text", },
         "session_source_medium": { "value": "", "type": "text", },
+    },
+    "validateFields": {
+        "name" : { "error_type": ["name_surname_missing", "custom"] },
+        "last name" : { "error_type": ["name_surname_missing", "custom"] },
+        "email" : { "error_type": ["email_missing", "email_invalid"] },
+        "phone" : { "error_type": ["phone_missing", "custom"] },
     }
 }

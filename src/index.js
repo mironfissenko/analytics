@@ -12,11 +12,25 @@ export default class Analytics {
         this.language = language;
         this.settings = Object.assign(defaultSettings, customSettings);
         this.forms = this.getForms();
+        this.insertHiddenFieldsInForms(this.settings.hiddenFields);
         this.tgLinks = document.querySelectorAll(`a[href="${this.settings.tgBaseLink}"]`);
         Analytics.instance = this;
 
         return this;
     }
+
+    getValidateField(name) {
+        return this.settings.validateFields[name];
+    }
+
+    setValidateField(name, errorType = ["custom", "custom"]) {
+        this.settings.validateFields[name] = {"error_type": error_type};
+    }
+
+    removeValidateField(name) {
+        delete this.settings.validateFields[name];
+    }
+
 
     getHiddenField(name) {
         return this.settings.hiddenFields[name];
@@ -29,6 +43,8 @@ export default class Analytics {
     removeHiddenField(name) {
         delete this.settings.hiddenFields[name];
     }
+
+
 
     _constructSendPulseLink (pulseValues = this.settings.tgPulseValues, urlBase = "https://tg.pulse.is/", botName = this.settings.tgBotName, pulseStart = this.settings.tgSendPulseStart) {
         let link = urlBase + botName + "?start=" + pulseStart;
@@ -56,12 +72,21 @@ export default class Analytics {
 
         if (!errorPopup) {
             errorPopup = document.createElement('div');
-            errorPopup.id = "tilda-popup-for-error";
-            errorPopup.className = "js-form-popup-errorbox tn-form__errorbox-popup";
-            errorPopup.style.display = "none";
+            errorPopup.id = popupSelector;
+            if (this.settings.platform === 'tilda') {
+                errorPopup.className = "js-form-popup-errorbox tn-form__errorbox-popup";
+                errorPopup.style.display = "none";
+                let errorSubPopup = document.createElement("div");
+                errorSubPopup.className = "t-form__errorbox-text t-text t-text_xs";
+            }
 
-            let errorSubPopup = document.createElement("div");
-            errorSubPopup.className = "t-form__errorbox-text t-text t-text_xs";
+            if (this.settings.platform === 'webflow') {
+                errorPopup.className = "js-form-popup-errorbox";
+                errorPopup.style.display = "none";
+                let errorSubPopup = document.createElement("div");
+                errorSubPopup.className = "popup_message";
+            }
+
             errorSubPopup.style.display = "block";
             errorPopup.appendChild(errorSubPopup);
 
@@ -69,13 +94,19 @@ export default class Analytics {
             return errorSubPopup;
         }
 
-        return errorPopup.querySelector(".t-form__errorbox-text.t-text.t-text_xs");
+        if (this.settings.platform === 'tilda') {
+            return errorPopup.querySelector(".t-form__errorbox-text.t-text.t-text_xs");
+        }
+
+        if (this.settings.platform === 'webflow') {
+            return errorPopup.querySelector(".popup_message");
+        }
     }
 
     _showErrorMessage(type = "custom", animationTimeout = 5000) {
         let errorMessageContainer = this._ensureErrorPopupDiv(this.settings.popupSelector);
         if (!errorMessageContainer) {
-            console.warn("container '.t-form__errorbox-text.t-text.t-text_xs' not found.");
+            console.warn("container for errors not found.");
             return;
         }
 
@@ -159,7 +190,6 @@ export default class Analytics {
                     }
                     const data = await response.json();
                     console.log("Analytics recieved;");
-                    // console.log(data);
 
                     this._inputInHiddenField("Client_Ip", data.clientIp);
                     this._inputInHiddenField("User_Agent", data.userAgent);
@@ -177,56 +207,40 @@ export default class Analytics {
         });
     }
 
-    // рефактор под две CMS
-    _phoneTracker(event) {
-        console.log('Event in phoneHelper triggered;');
-        const pInput = event.target;
-        const pValue = pInput.value;
+    _phoneAssemble(form, platform = this.settings.platform) {
+        let phoneNumber = "";
+        let phoneMask = "";
+        let phoneCode = "";
 
-        const phoneEvent = new Event("phoneChange");
-        window.dispatchEvent(phoneEvent);
+        if (platform === "tilda") {
+            phoneMask = form.querySelector(".t-input-phonemask__select-flag").getAttribute("data-phonemask-flag").trim();
+            phoneCode = form.querySelector(".t-input-phonemask__select-code").textContent.trim();
+            phoneNumber = (phoneCode + form.querySelector('[name="tildaspec-phone-part[]"]').getAttribute("data-phonemask-current").trim()).replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
+            this._mainPhone = phoneNumber;
+        }
 
-        // console.log(pValue);
+        if (platform === "webflow" || platform === "wordpress") {
+            phoneMask = form.querySelector(".iti__flag").getAttribute("class").trim().replace("iti__flag", "").replace("iti__", "").trim();
+            phoneCode = form.querySelector(".iti__selected-dial-code").textContent.trim();
+            phoneNumber = (phoneCode + form.querySelector('[name="phone"]').value.trim()).replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
+            this._mainPhone = phoneNumber
+        }
 
-        if (pValue.charAt(1) === "0" && pInput.getAttribute("data-phonemask-iso") === "de") {
-            let rawValue = pValue.replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
-            while (rawValue.charAt(0) === "0") {
-                rawValue = rawValue.slice(1);
-            }
-
-            let newPhoneValue = "("
-            for (let i = 0; i <= rawValue.length; i++) {
-                newPhoneValue += rawValue.charAt(i);
-
-                if (i === 2) {
-                    newPhoneValue += ") ";
-                }
-
-                if (i === 6) {
-                    newPhoneValue += "-";
-                }
-
-                console.log("newPhoneValue: ", newPhoneValue, i);
-            }
-
-            pInput.value = newPhoneValue;
-            pInput.innerHTML = newPhoneValue;
-            pInput.textContent = newPhoneValue;
+        return {
+            phoneNumber,
+            phoneMask,
+            phoneCode
         }
     }
 
-    // рефактор под две CMS
     async _phoneValidation(form) {
         try {
             console.log("phoneValidation is triggered;");
-            const phoneMask = form.querySelector(".t-input-phonemask__select-flag").getAttribute("data-phonemask-flag").trim();
-            const phoneCode = form.querySelector(".t-input-phonemask__select-code").textContent.trim();
-            const phoneNumber = (phoneCode + form.querySelector('[name="tildaspec-phone-part[]"]').getAttribute("data-phonemask-current").trim()).replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
-            this._mainPhone = phoneNumber;
+            const phoneAssembled = this._phoneAssemble(form);
 
             const requestData = {
-                phone: phoneNumber,
-                countryCodeIso: phoneMask
+                phone: phoneAssembled.phoneNumber,
+                countryCodeIso: phoneAssembled.phoneMask
             };
 
             const response = await fetch(`${this.settings.apiUrl}/phone/validate`, {
@@ -250,7 +264,6 @@ export default class Analytics {
                     return false;
                 }
             }
-
 
         } catch (error) {
             console.error("Phone validation or request failed:", error);
@@ -293,6 +306,7 @@ export default class Analytics {
         form.setAttribute("animation", "false");
         console.log("Validation is not busy;");
     }
+
 
     _fuTilda(form) {
         try {
@@ -348,18 +362,6 @@ export default class Analytics {
         return 'direct';
     }
 
-    // Рефактор для двух CMS, а также подумать, на какое событие лучше повесить
-    // метод, чтобы в случае добавления новых атрибутов в tg.pulse они не пропадали.
-    phoneHelper() {
-        const phones = document.querySelectorAll('input[name="tildaspec-phone-part[]"]');
-        console.log('phoneHelper triggered;');
-
-        phones.forEach((phone) => {
-            phone.addEventListener('input', this._phoneTracker);
-            phone.addEventListener('paste', this._phoneTracker);
-        });
-    }
-
     getForms() {
         try {
             let initForms = document.querySelectorAll('form');
@@ -368,7 +370,7 @@ export default class Analytics {
             // сделать кроссплатформенное обнаружение форм, не через tildaspec-phone-part.
             // у нас есть еще webflow
             for (const form of initForms) {
-                const flag = (form.querySelector('input[name="email"]') !== null) && (form.querySelector('input[name="tildaspec-phone-part[]"]') !== null);
+                const flag = (form.querySelector('input[name="email"]') !== null) && (form.querySelector('input[name="phone"]') !== null);
 
                 if (flag) {
                     resForms.push(form);
@@ -391,6 +393,35 @@ export default class Analytics {
         }
     }
 
+    _validateFields(form, fieldsObject = this.settings.validateFields) {
+        const fields = Object.entries(fieldsObject);
+
+        // Используем for...of вместо forEach
+        for (const [name, config] of fields) {
+            const fieldEl = form.querySelector(`[name="${name}"]`);
+
+            // Защита от ошибок, если поля нет в конкретной форме
+            if (!fieldEl) continue;
+
+            const fieldValue = fieldEl.value.trim();
+            console.log(name, fieldValue, fieldEl);
+
+            if (!fieldValue) {
+                this._showErrorMessage(config.error_type[0]);
+                this._stopButtonAnimation(form);
+                return false; // Теперь это прерывает всю функцию _validateFields
+            }
+
+            if (!fieldEl.checkValidity()) {
+                this._showErrorMessage(config.error_type[1]);
+                this._stopButtonAnimation(form);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     // Главный метод для валидации сабмита формы. Нужен аккуратный рефакторинг с учетом наличия двух CMS
     subValidation(forms) {
         // конкретно тут может быть проблема с safari, так как subValidation запускается сразу после инициализации объекта класса
@@ -398,30 +429,10 @@ export default class Analytics {
             console.log("subValidation was called;");
 
             for (const form of forms) {
-                this._fuTilda(form);
-                // вынести до myObserver в отдельную функцию с учетом двух CMS
-                let subButton = form.querySelector("button[type='submit']");
-
-                let countryCode = form.querySelector("span[class='t-input-phonemask__select-code']");
-                let prevValue = countryCode.textContent.trim();
-
-                let myObserver = new MutationObserver(function () {
-                    const countryCodeNew = form.querySelector("span[class='t-input-phonemask__select-code']");
-                    let curValue = countryCodeNew.textContent.trim();
-
-                    if (curValue != prevValue) {
-                        console.log("countryCode change was detected;");
-                        let phoneField = form.querySelector('input[name="tildaspec-phone-part[]"]');
-                        phoneField.value = "";
-                        phoneField.innerHTML = "";
-                        phoneField.textContent = "";
-
-                        phoneField.setAttribute("data-phonemask-current", "");
-                        prevValue = curValue;
-                    }
-                })
-
-                myObserver.observe(countryCode, { childList: true, characterData: true, subtree: true });
+                if (this.settings.platform === 'tilda') {
+                    this._fuTilda(form);
+                }
+                let subButton = form.querySelector("[type='submit']");
 
                 let subButtonContainer = subButton.parentElement;
                 subButtonContainer.style.cursor = "pointer";
@@ -429,56 +440,19 @@ export default class Analytics {
                 subButton.setAttribute('inert', "disabled");
                 form.setAttribute("animation", "false");
 
-                // оптимизировать проверку полей и вынести повторяющийся код
-                // в отдельную функцию
                 subButtonContainer.addEventListener("click", async () => {
                     if (form.getAttribute("animation") == "false") {
-                        const firstName = form.querySelector('input[name="name"]').value;
-                        const lastName = form.querySelector('input[name="last name"]').value;
-
-                        console.log(firstName,lastName);
-
-                        if (!firstName || !lastName) {
-                            this._showErrorMessage("name_surname_missing");
-                            console.warn("Name or surname is missing!");
-                            this._stopButtonAnimation(form);
-                            console.log("stopButtonAnimation was called;");
+                        if (!this._validateFields(form)) {
                             return false;
-                        }
-
-                        const email = form.querySelector('input[name="email"]').value.trim();
-                        if (!email) {
-                            this._showErrorMessage("email_missing");
-                            console.warn("Email is missing!");
-                            this._stopButtonAnimation(form);
-                            console.log("stopButtonAnimation was called;");
-                            return false;
-                        }
+                        };
 
                         const emailField = form.querySelector('input[name="email"]');
-                        if (!emailField.checkValidity()) {
-                            console.warn("Email is invalid!");
-                            this._showErrorMessage("email_invalid");
-                            this._stopButtonAnimation(form);
-                            console.log("stopButtonAnimation was called;");
-                            return false;
-                        }
                         this._mainEmail = emailField.value;
-
-                        const phone = form.querySelector("input[name='tildaspec-phone-part[]']").getAttribute("data-phonemask-current");
-                        if (!phone) {
-                            console.warn("Phone Number is missing!");
-                            this._showErrorMessage("phone_missing");
-                            this._stopButtonAnimation(form);
-                            console.log("stopButtonAnimation was called;");
-                            return false;
-                        }
 
                         if (!form.checkValidity()) {
                             form.reportValidity();
                             this._showErrorMessage("required_fields_missing");
                             this._stopButtonAnimation(form);
-                            console.log("stopButtonAnimation was called;");
                             return false;
                         }
 
@@ -494,9 +468,8 @@ export default class Analytics {
                                     link.href = this._constructSendPulseLink({"phone_number": this._mainPhone, "email": this._mainEmail});
                                 }
                             });
-                            // subButton.click();
                             this._formSubmitted = true;
-                            form.requestSubmit(form.querySelector("button[type='submit']"));
+                            form.requestSubmit(form.querySelector("[type='submit']"));
                             subButton.setAttribute('inert', "disabled");
                             setTimeout(() => {
                                 this._formSubmitted = false;
@@ -517,9 +490,9 @@ export default class Analytics {
 
             const forms = this.getForms();
             for (const form of forms) {
-                let subButton = form.querySelector("button[type='submit']");
+                let subButton = form.querySelector("[type='submit']");
                 subButton.setAttribute('inert', "enabled");
-                form.requestSubmit(form.querySelector("button[type='submit']"));
+                form.requestSubmit(form.querySelector("[type='submit']"));
                 console.log("stopButtonAnimation was called;");
                 this._stopButtonAnimation(form);
 
@@ -530,7 +503,5 @@ export default class Analytics {
     init() {
         this.lastNameHelper(this.forms);
         this.subValidation(this.forms);
-        this.phoneHelper();
-        this.insertHiddenFieldsInForms(this.settings.hiddenFields);
     }
 }
