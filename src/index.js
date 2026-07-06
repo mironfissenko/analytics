@@ -281,7 +281,7 @@ class Analytics {
     _stopButtonAnimation(form) {
         form.setAttribute("animation", "false");
         console.log("Validation is not busy;");
-    }z
+    }
 
     _fuTilda(form) {
         try {
