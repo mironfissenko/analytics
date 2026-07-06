@@ -19,30 +19,6 @@ class Analytics {
         return this;
     }
 
-    getValidateField(name) {
-        return this.settings.validateFields[name];
-    }
-
-    setValidateField(name, errorType = ["custom", "custom"]) {
-        this.settings.validateFields[name] = {"error_type": errorType};
-    }
-
-    removeValidateField(name) {
-        delete this.settings.validateFields[name];
-    }
-
-    getHiddenField(name) {
-        return this.settings.hiddenFields[name];
-    }
-
-    setHiddenField(name, type = "text", value = "") {
-        this.settings.hiddenFields[name] = {value, type};
-    }
-
-    removeHiddenField(name) {
-        delete this.settings.hiddenFields[name];
-    }
-
     _constructSendPulseLink (pulseValues = this.settings.tgPulseValues, urlBase = "https://tg.pulse.is/", botName = this.settings.tgBotName, pulseStart = this.settings.tgSendPulseStart) {
         let link = urlBase + botName + "?start=" + pulseStart;
 
@@ -495,10 +471,28 @@ class Analytics {
         }
     }
 
-    init() {
+    _init() {
         this.insertHiddenFieldsInForms(this.settings.hiddenFields);
         this.lastNameHelper(this.forms);
         this.subValidation(this.forms);
+    }
+
+    initAfterAllEvents(eventName) {
+        let eventsTriggeredLast = new Set();
+
+        console.log(eventName);
+        eventsTriggeredLast.add(eventName);
+
+        if (
+            eventsTriggeredLast.has("DOMContentLoaded") &&
+            eventsTriggeredLast.has("pageshow") &&
+            eventsTriggeredLast.has("load")
+        ) {
+            console.log("All events happened; waiting 100ms");
+            setTimeout(() => {
+                this._init();
+            }, 100);
+        }
     }
 }
 
