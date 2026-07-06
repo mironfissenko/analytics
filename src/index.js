@@ -13,8 +13,40 @@ class Analytics {
         this.eventsTriggeredLast = new Set();
         this.settings = Object.assign(defaultSettings, customSettings);
         this.forms = this.getForms();
-        this.settings.hiddenFields["Preferred_Contact_Language"].value = this.language;
+        this.settings.hiddenFields.Preferred_Contact_Language.value = this.language;
         this.tgLinks = document.querySelectorAll(`a[href="${this.settings.tgBaseLink}"]`);
+
+        if (this.settings.platform === 'webflow') {
+            this.settings.hiddenFields.phone = { "value": "", "type": "text", };
+            this.forms.forEach(form => {
+                const phoneVisible = form.querySelector('input[name="phone-visible"]');
+                const phone = form.querySelector('input[name="phone"]');
+                const iti = window.intlTelInput(phoneVisible, {
+                    initialCountry: "de",
+                    loadUtils: () => import(
+                        /* webpackIgnore: true */
+                        "https://cdn.jsdelivr.net/npm/intl-tel-input@28.0.4/dist/js/utils.js"
+                        ),
+                });
+
+                iti.promise.then(() => {
+                    const syncPhoneNumber = () => {
+                        if (iti.isValidNumber()) {
+                            phone.value = iti.getNumber();
+                        } else {
+                            phone.value = "";
+                        }
+                    };
+
+                    phoneVisible.addEventListener("input", syncPhoneNumber);
+                    phoneVisible.addEventListener("countrychange", syncPhoneNumber);
+
+                }).catch((error) => {
+                    console.error("Ошибка загрузки утилит intl-tel-input в форме:", error);
+                });
+            });
+        }
+
         Analytics.instance = this;
 
         return this;
@@ -467,7 +499,6 @@ class Analytics {
                 form.requestSubmit(form.querySelector("[type='submit']"));
                 console.log("stopButtonAnimation was called;");
                 this._stopButtonAnimation(form);
-
             }
         }
     }
