@@ -25,7 +25,7 @@ class Analytics {
         return this;
     }
 
-    _constructSendPulseLink (pulseValues = this.settings.tgPulseValues, urlBase = "https://tg.pulse.is/", botName = this.settings.tgBotName, pulseStart = this.settings.tgSendPulseStart) {
+    static constructSendPulseLink (pulseValues, urlBase = "https://tg.pulse.is/", botName, pulseStart) {
         let link = urlBase + botName + "?start=" + pulseStart;
 
         Object.entries(pulseValues).forEach(([key, value]) => {
@@ -204,7 +204,7 @@ class Analytics {
         if (platform === "webflow" || platform === "wordpress") {
             phoneMask = form.querySelector(".iti__flag").getAttribute("class").trim().replace("iti__flag", "").replace("iti__", "").trim();
             phoneCode = form.querySelector(".iti__selected-dial-code").textContent.trim();
-            phoneNumber = (phoneCode + form.querySelector('[name="phone"]').value.trim()).replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
+            phoneNumber = (form.querySelector('[name="phone"]').value.trim()).replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
             this._mainPhone = phoneNumber
         }
 
@@ -398,6 +398,17 @@ class Analytics {
         return true;
     }
 
+    // этот метод отвечает за работу отправки событий для мета
+    _googleTagSendLogic() {
+        if (this.settings.googleTagSend.method === "thankYouPage") {
+            if (this.settings.googleTagSend.isSendPulseLink) {
+                sessionStorage.setItem("phone_number", this._mainPhone);
+                sessionStorage.setItem("email", this._mainEmail);
+            }
+            window.location.href = this.settings.googleTagSend.thankYouPageUrl;
+        }
+    }
+
     subValidation(forms) {
         //TODO: конкретно тут может быть проблема с safari, так как subValidation запускается сразу после инициализации объекта класса
         try {
@@ -434,13 +445,12 @@ class Analytics {
                         this._startButtonAnimation(form);
                         let validationResult = await this._phoneValidation(form);
 
-
                         console.log("Validation: ", validationResult);
                         if (validationResult && !this._formSubmitted) {
                             subButton.setAttribute('inert', "enabled");
                             this.tgLinks.forEach(link => {
                                 if (link && link != null){
-                                    link.href = this._constructSendPulseLink({"phone_number": this._mainPhone, "email": this._mainEmail});
+                                    link.href = Analytics.constructSendPulseLink({"phone_number": this._mainPhone, "email": this._mainEmail}, "https://tg.pulse.is/", this.settings.tgBotName, this.settings.tgSendPulseStart);
                                 }
                             });
                             this._formSubmitted = true;
@@ -448,6 +458,7 @@ class Analytics {
                             subButton.setAttribute('inert', "disabled");
                             setTimeout(() => {
                                 this._formSubmitted = false;
+                                this._googleTagSendLogic();
                             }, 2000);
                         } else {
                             this._showErrorMessage("phone_invalid");

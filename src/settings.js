@@ -10,6 +10,12 @@ export default {
     "platform": "tilda",
     "company": "ICH",
     "apiUrl": "https://api.int.negentrix.com",
+    "googleTagSend": {
+        "method": "dataLayerPush",
+        "isSendPulseLink": true,
+        "event": "submit_form",
+        "thankYouPageUrl": "/thank-you"
+    },
     "errorMap": {
         "email_missing": {
             "message": {
