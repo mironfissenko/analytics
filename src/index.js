@@ -53,17 +53,16 @@ class Analytics {
             //TODO: оптимизировать код в зависимости от платформы
             errorPopup = document.createElement('div');
             errorPopup.id = popupSelector;
+            let errorSubPopup = document.createElement("div");
             if (this.settings.platform === 'tilda') {
                 errorPopup.className = "js-form-popup-errorbox tn-form__errorbox-popup";
                 errorPopup.style.display = "none";
-                let errorSubPopup = document.createElement("div");
                 errorSubPopup.className = "t-form__errorbox-text t-text t-text_xs";
             }
 
             if (this.settings.platform === 'webflow') {
                 errorPopup.className = "js-form-popup-errorbox";
                 errorPopup.style.display = "none";
-                let errorSubPopup = document.createElement("div");
                 errorSubPopup.className = "popup_message";
             }
 
