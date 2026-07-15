@@ -50,6 +50,7 @@ class Analytics {
         let errorPopup = document.querySelector(popupSelector);
 
         if (!errorPopup) {
+            //TODO: оптимизировать код в зависимости от платформы
             errorPopup = document.createElement('div');
             errorPopup.id = popupSelector;
             if (this.settings.platform === 'tilda') {
@@ -384,7 +385,7 @@ class Analytics {
             if (!fieldValue) {
                 this._showErrorMessage(config.error_type[0]);
                 this._stopButtonAnimation(form);
-                return false; // Теперь это прерывает всю функцию _validateFields
+                return false;
             }
 
             if (!fieldEl.checkValidity()) {
@@ -397,9 +398,8 @@ class Analytics {
         return true;
     }
 
-    // Главный метод для валидации сабмита формы. Нужен аккуратный рефакторинг с учетом наличия двух CMS
     subValidation(forms) {
-        // конкретно тут может быть проблема с safari, так как subValidation запускается сразу после инициализации объекта класса
+        //TODO: конкретно тут может быть проблема с safari, так как subValidation запускается сразу после инициализации объекта класса
         try {
             console.log("subValidation was called;");
 
@@ -476,7 +476,7 @@ class Analytics {
 
     _init() {
         this.insertHiddenFieldsInForms(this.settings.hiddenFields);
-
+        //TODO: вынести в отдельную функцию, сборку номера для валидации осуществить через iti
         if (this.settings.platform === 'webflow') {
             this.forms.forEach(form => {
                 const phoneVisible = form.querySelector('input[name="phone-visible"]');
