@@ -9,6 +9,7 @@ export default {
     },
     "platform": "tilda",
     "company": "ICH",
+    "subButtonAnimationSelector": "[type='submit']",
     "apiUrl": "https://api.int.negentrix.com",
     "googleTagSend": {
         "method": "dataLayerPush",
