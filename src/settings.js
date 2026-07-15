@@ -1,5 +1,5 @@
 export default {
-    "popupSelector": "#tilda-popup-for-error",
+    "popupSelector": "tilda-popup-for-error",
     "tgBaseLink": "https://t.me/ICHBuddyBot",
     "tgBotName": "ICHBuddyBot",
     "tgSendPulseStart": "682c86d992037dea7e02af12",

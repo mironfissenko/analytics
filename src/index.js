@@ -47,7 +47,7 @@ class Analytics {
     }
 
     _ensureErrorPopupDiv(popupSelector) {
-        let errorPopup = document.querySelector(popupSelector);
+        let errorPopup = document.getElementById(popupSelector);
 
         if (!errorPopup) {
             //TODO: оптимизировать код в зависимости от платформы
