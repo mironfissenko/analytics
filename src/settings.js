@@ -22,51 +22,58 @@ export default {
             "message": {
                 "RU": "Пожалуйста, заполните email",
                 "EN": "Please fill in Email",
-                "DE": "Bitte E-Mail ausfüllen"
+                "DE": "Bitte E-Mail ausfüllen",
+                "UA": "Будь ласка, введіть email"
             }
         },
         "email_invalid": {
             "message": {
                 "RU": "Неверный email",
                 "EN": "Email is invalid",
-                "DE": "E-Mail ist ungültig"
+                "DE": "E-Mail ist ungültig",
+                "UA": "Невірний email"
             }
         },
         "phone_missing": {
             "message": {
                 "RU": "Пожалуйста, заполните телефон",
                 "EN": "Please fill in Phone Number",
-                "DE": "Bitte geben Sie Ihre Telefonnummer ein"
+                "DE": "Bitte geben Sie Ihre Telefonnummer ein",
+                "UA": "Будь ласка, введіть номер телефону"
             }
         },
         "phone_invalid": {
             "message": {
                 "RU": "Неверный номер телефона",
                 "EN": "Phone number is invalid",
-                "DE": "Telefonnummer ist ungültig"
+                "DE": "Telefonnummer ist ungültig",
+                "UA": "Невірний номер телефону"
             }
         },
         "name_surname_missing": {
             "message": {
                 "RU": "Пожалуйста, укажите свое имя и фамилию",
                 "EN": "Please fill your Name and Surname",
-                "DE": "Bitte geben Sie Ihren Vor- und Nachnamen ein"
+                "DE": "Bitte geben Sie Ihren Vor- und Nachnamen ein",
+                "UA": "Будь ласка, вкажіть своє ім'я та прізвище"
             }
         },
         "required_fields_missing": {
             "message": {
                 "RU": "Пожалуйста, заполните все обязательные поля",
                 "EN": "Please fill in all required fields",
-                "DE": "Bitte füllen Sie alle erforderlichen Felder aus"
+                "DE": "Bitte füllen Sie alle erforderlichen Felder aus",
+                "UA": "Будь ласка, заповніть всі обов'язкові поля"
             }
         },
         "custom": {
             "message": {
                 "RU": "При заполнении формы произошла ошибка",
                 "EN": "An error occurred when filling out the form",
-                "DE": "Beim Ausfüllen des Formulars ist ein Fehler aufgetreten"
+                "DE": "Beim Ausfüllen des Formulars ist ein Fehler aufgetreten",
+                "UA": "Під час заповнення форми сталася помилка"
             }
-        },
+        }
     },
     "hiddenFields": {
         "User_Agent": { "value": "", "type": "text", },
