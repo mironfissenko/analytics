@@ -429,7 +429,7 @@ class Analytics {
                     if (form.getAttribute("animation") == "false") {
                         if (!this._validateFields(form)) {
                             return false;
-                        };
+                        }
 
                         const emailField = form.querySelector('input[name="email"]');
                         this._mainEmail = emailField.value;
@@ -441,11 +441,13 @@ class Analytics {
                             return false;
                         }
 
+                        this._formSubmitted = true;
+
                         this._startButtonAnimation(form);
                         let validationResult = await this._phoneValidation(form);
 
                         console.log("Validation: ", validationResult);
-                        if (validationResult && !this._formSubmitted) {
+                        if (validationResult && this._formSubmitted) {
                             subButton.setAttribute('inert', "enabled");
                             this.tgLinks.forEach(link => {
                                 if (link && link != null){
