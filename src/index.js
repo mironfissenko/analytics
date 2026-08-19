@@ -409,6 +409,8 @@ class Analytics {
             dataLayer.push({
                 'event': this.settings.googleTagSend.event,
             });
+        } else {
+            console.warn("No dataLayer push or any analytics logic");
         }
     }
 
