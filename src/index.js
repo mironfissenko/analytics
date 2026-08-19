@@ -417,7 +417,7 @@ class Analytics {
                 if (this.settings.platform === 'tilda') {
                     this._fuTilda(form);
                 }
-                let subButton = form.querySelector("[type='submit']");
+                let subButton = form.querySelector(this.settings.subButtonAnimationSelector);
 
                 let subButtonContainer = subButton.parentElement;
                 subButtonContainer.style.cursor = "pointer";
@@ -455,7 +455,7 @@ class Analytics {
                                 }
                             });
                             this._formSubmitted = true;
-                            form.requestSubmit(form.querySelector("[type='submit']"));
+                            form.requestSubmit(form.querySelector(this.settings.subButtonAnimationSelector));
                             subButton.setAttribute('inert', "disabled");
                             setTimeout(() => {
                                 this._formSubmitted = false;
@@ -477,9 +477,9 @@ class Analytics {
 
             const forms = this.getForms();
             for (const form of forms) {
-                let subButton = form.querySelector("[type='submit']");
+                let subButton = form.querySelector(this.settings.subButtonAnimationSelector);
                 subButton.setAttribute('inert', "enabled");
-                form.requestSubmit(form.querySelector("[type='submit']"));
+                form.requestSubmit(form.querySelector(this.settings.subButtonAnimationSelector));
                 console.log("stopButtonAnimation was called;");
                 this._stopButtonAnimation(form);
             }
