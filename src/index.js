@@ -405,6 +405,10 @@ class Analytics {
                 sessionStorage.setItem("email", this._mainEmail);
             }
             window.location.href = this.settings.googleTagSend.thankYouPageUrl;
+        } else if (this.settings.googleTagSend.method === "dataLayerPush") {
+            dataLayer.push({
+                'event': this.settings.googleTagSend.event,
+            });
         }
     }
 
