@@ -319,15 +319,17 @@ class Analytics {
             medium = urlParams.get('utm_medium');
         } else if (referrer) {
             const refHost = new URL(referrer).hostname;
+            const isSelfReferral = refHost === window.location.hostname;
 
-            const searchEngines = ['google', 'yandex', 'bing', 'duckduckgo', 'yahoo'];
-            const isSearch = searchEngines.some(engine => refHost.includes(engine));
-
-            if (isSearch) {
-                medium = 'organic';
-            } else {
+            if (!isSelfReferral) {
+                const searchEngines = ['google', 'yandex', 'bing', 'duckduckgo', 'yahoo'];
+                const isSearch = searchEngines.some(engine => refHost.includes(engine));
+                medium = isSearch ? 'organic' : 'referral';
+            } else if (navigator.userAgent.includes('Instagram')) {
                 medium = 'referral';
             }
+        } else if (navigator.userAgent.includes('Instagram')) {
+            medium = 'referral';
         }
 
         return medium;
@@ -338,7 +340,18 @@ class Analytics {
         const referrer = document.referrer;
 
         if (urlParams.has('utm_source')) return urlParams.get('utm_source');
-        if (referrer) return new URL(referrer).hostname;
+        
+        if (referrer) {
+            const refHost = new URL(referrer).hostname;
+            if (refHost !== window.location.hostname) {
+                return refHost;
+            }
+        }
+
+        if (navigator.userAgent.includes('Instagram')) {
+            return 'instagram.com';
+        }
+
         return 'direct';
     }
 
@@ -493,6 +506,7 @@ class Analytics {
     }
 
     _init() {
+        this._getMarketingData();
         this.insertHiddenFieldsInForms(this.settings.hiddenFields);
         //TODO: вынести в отдельную функцию, сборку номера для валидации осуществить через iti
         if (this.settings.platform === 'webflow') {
