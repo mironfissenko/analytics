@@ -501,6 +501,7 @@ class Analytics {
                 const phone = form.querySelector('input[name="phone"]');
                 const iti = window.intlTelInput(phoneVisible, {
                     initialCountry: "de",
+                    dropdownContainer: document.body,
                     loadUtils: () => import(
                         /* webpackIgnore: true */
                         "https://cdn.jsdelivr.net/npm/intl-tel-input@28.0.4/dist/js/utils.js"
