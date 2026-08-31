@@ -133,7 +133,22 @@ class Analytics {
             console.error("Error occured: ", error);
             return {};
         }
+    }
 
+    _getCookiesAgreement(category = "analytics") {
+        let allCookies = this._getAllCookies();
+        const agreement = allCookies[this.settings.cookieAgreement];
+        if (!agreement) return false;
+
+        if (category === "analytics") {
+            if (agreement.includes(category)) return true;
+        }
+
+        if (category === "advertising") {
+            if (agreement.includes(category)) return true;
+        }
+
+        return false;
     }
 
     _inputInHiddenField(fieldName, fieldValue) {
@@ -147,6 +162,8 @@ class Analytics {
 
     // Подумать, на какое событие тоже лучше было бы повесить этот метод
     _attachLastNameListener(form) {
+        if (!this._getCookiesAgreement()) return;
+
         const lastNameField = form.querySelector('[name="email"]');
 
         lastNameField.addEventListener('change', async () => {
@@ -297,6 +314,7 @@ class Analytics {
     }
 
     _getMarketingData() {
+        if (!this._getCookiesAgreement()) { return };
         let medium = this._getMedium();
         let source = this._getSource();
 
@@ -340,7 +358,7 @@ class Analytics {
         const referrer = document.referrer;
 
         if (urlParams.has('utm_source')) return urlParams.get('utm_source');
-        
+
         if (referrer) {
             const refHost = new URL(referrer).hostname;
             if (refHost !== window.location.hostname) {

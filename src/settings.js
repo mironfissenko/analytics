@@ -3,6 +3,7 @@ export default {
     "tgBaseLink": "https://t.me/ICHBuddyBot",
     "tgBotName": "ICHBuddyBot",
     "tgSendPulseStart": "682c86d992037dea7e02af12",
+    "cookieAgreement": "t_cookiesCategories",
     "tgPulseValues": {
         "phone_number": "",
         "email": "",
