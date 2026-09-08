@@ -86,7 +86,7 @@ export default {
         "Client_Ip": { "value": "", "type": "text", },
         "Preferred_Contact_Language": { "value": "RU", "type": "text",},
         "Preferred_Product": { "value": "General", "type": "text", },
-        "Newsletter_Agreement_Text": { "value": "Ich stimme dem Erhalt von Informationen und Angeboten der Negentrix Education Group (ICH, DWW, BIT, MBIA u.a.) zu. Eine Abmeldung ist jederzeit möglich.", "type": "text", },
+        "Newsletter_Agreement_Text": { "value": "Ich stimme dem Erhalt von Informationen und Angeboten der Negentrix Education Group (ICH, DWW, BIT, MBIA, AABI u.a.) zu. Eine Abmeldung ist jederzeit möglich.", "type": "text", },
         "Privacy_Agreement_Id": { "value": "", "type": "text", },
         "ga_client_id": { "value": "","type": "text", },
         "first_source": { "value": "", "type": "text", },
